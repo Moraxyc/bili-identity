@@ -1,0 +1,2 @@
+include bili_identity/VERSION
+include bili_identity/py.typed
