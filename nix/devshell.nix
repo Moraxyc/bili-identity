@@ -1,17 +1,20 @@
 {
   perSystem =
     { pkgs, ... }:
+    let
+      pypkgs = pkgs.python313.pkgs;
+    in
     {
       devShells.default = pkgs.mkShellNoCC {
         venvDir = ".venv";
         buildInputs =
           with pkgs;
-          [ ]
-          ++ (with python313Packages; [
-            venvShellHook
+          [
+            sqlite
 
-            bilibili-api-python
-          ]);
+            pypkgs.venvShellHook
+          ]
+          ++ (import ./deps.nix pypkgs);
       };
     };
 }

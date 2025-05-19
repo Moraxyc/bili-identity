@@ -3,6 +3,9 @@
   python3,
 }:
 
+let
+  pypkgs = python3.pkgs;
+in
 python3.pkgs.buildPythonPackage {
   pname = "bili-identity";
   version = builtins.readFile ../bili_identity/VERSION;
@@ -10,14 +13,11 @@ python3.pkgs.buildPythonPackage {
 
   src = ../.;
 
-  build-system = with python3.pkgs; [
+  build-system = with pypkgs; [
     setuptools
-
   ];
 
-  dependencies = with python3.pkgs; [
-    bilibili-api-python
-  ];
+  dependencies = import ./deps.nix pypkgs;
 
   meta = {
     homepage = "https://github.com/Moraxyc/bili-identity";

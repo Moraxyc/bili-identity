@@ -1,1 +1,9 @@
 bilibili-api-python>=17.1.4
+
+fastapi
+uvicorn
+
+sqlalchemy
+aiosqlite
+
+ruamel.yaml
