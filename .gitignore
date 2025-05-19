@@ -184,3 +184,8 @@ cython_debug/
 .direnv/
 result
 result-*
+
+# Runtime Files
+config.yaml
+bili_id.db
+bili_id.log
