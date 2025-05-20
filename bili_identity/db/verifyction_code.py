@@ -6,7 +6,6 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bili_identity.models import VerificationCode
-from bili_identity.utils import generate_code
 
 logger = logging.getLogger(__name__)
 

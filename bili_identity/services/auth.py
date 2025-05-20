@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime, timezone
 
-from bili_identity.db import AsyncSessionLocal, get_verifiction_code
+from bili_identity.db import AsyncSessionLocal, get_verification_code
 
 from .user import mark_user_as_verified, register_user
 
@@ -18,7 +18,7 @@ async def send_code(uid: int):
 
 async def verify_code(uid: int, code: str) -> bool:
     async with AsyncSessionLocal() as session:
-        record = await get_verifiction_code(uid, session)
+        record = await get_verification_code(uid, session)
         if not record:
             logger.warning(f"未找到验证码记录 uid={uid}")
             return False
