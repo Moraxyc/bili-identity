@@ -12,8 +12,6 @@ from bili_identity.config import get_config
 # from .api import admin, oidc
 from bili_identity.db import init_db
 
-config = get_config()
-
 logger = logging.getLogger(__name__)
 
 
@@ -52,6 +50,7 @@ def read_root():
 
 
 def main() -> None:
+    config = get_config()
     logging.basicConfig(level=getattr(logging, config.log.level))
     uvicorn.run(
         "bili_identity.main:app",

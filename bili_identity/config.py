@@ -1,5 +1,6 @@
 import logging
 import os
+from functools import lru_cache
 from typing import List, Literal, Optional
 
 import yaml
@@ -188,13 +189,14 @@ def load_config(path: str = "config.yaml") -> Settings:
     cred = settings.credential
     if isinstance(cred, DummyCredential):
         logger.error("请填写必要的Bilibili相关配置")
-        sys.exit(0)
+        sys.exit(1)
     return settings
 
 
 _config_instance: Optional[Settings] = None
 
 
+@lru_cache
 def get_config() -> Settings:
     global _config_instance
     if _config_instance is None:
