@@ -1,0 +1,21 @@
+[flake8]
+max-line-length = 88
+
+exclude =
+    .git,
+    __pycache__,
+    build,
+    dist,
+    .venv,
+    .mypy_cache,
+    .pytest_cache,
+    migrations,
+    env,
+    venv,
+    result
+
+max-complexity = 10
+
+filename = *.py
+
+show-source = true

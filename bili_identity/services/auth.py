@@ -62,7 +62,7 @@ async def verify_code(uid: int, code: str) -> bool:
             logger.debug(f"验证码不符合: {code}")
             return False
 
-        logger.debug(f"验证通过")
+        logger.debug("验证通过")
 
         # 标记用户为已验证
         await mark_user_as_verified(uid)

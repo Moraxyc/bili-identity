@@ -1,4 +1,4 @@
-from datetime import datetime, time, timezone
+from datetime import datetime, timezone
 
 from sqlalchemy import Boolean, Column, DateTime, String
 

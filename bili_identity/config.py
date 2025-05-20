@@ -5,7 +5,7 @@ from typing import List, Literal, Optional
 import yaml
 from bilibili_api import Credential
 from bilibili_api.session import Session
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field
 from ruamel.yaml import YAML, sys
 from ruamel.yaml.comments import CommentedMap
 
@@ -41,9 +41,12 @@ class LogConfig(BaseModel):
 
 class SecurityConfig(BaseModel):
     secret_key: str = Field(
-        default="请填写 secret_key", description="用于加密 JWT 的密钥，必须保密"
+        default="请填写 secret_key",
+        description="用于加密 JWT 的密钥，必须保密",
     )
-    jwt_expire_seconds: int = Field(default=3600, description="JWT 有效时间（秒）")
+    jwt_expire_seconds: int = Field(
+        default=3600, description="JWT 有效时间（秒）"
+    )
     jwt_algorithm: str = Field(default="HS256", description="JWT 加密算法")
     allowed_redirect_uris: List[str] = Field(
         default_factory=lambda: ["http://your-app.com/callback"],
@@ -52,7 +55,9 @@ class SecurityConfig(BaseModel):
 
 
 class OIDCConfig(BaseModel):
-    client_id: Optional[str] = Field(default=None, description="请填写 client_id")
+    client_id: Optional[str] = Field(
+        default=None, description="请填写 client_id"
+    )
     client_secret: Optional[str] = Field(
         default=None, description="请填写 client_secret"
     )
@@ -60,14 +65,22 @@ class OIDCConfig(BaseModel):
     redirect_uris: List[str] = Field(
         default_factory=lambda: ["https://your-app.com/callback"]
     )
-    scopes_supported: List[str] = Field(default_factory=lambda: ["openid", "profile"])
+    scopes_supported: List[str] = Field(
+        default_factory=lambda: ["openid", "profile"]
+    )
 
 
 class BiliConfig(BaseModel):
-    sessdata: Optional[str] = Field(default=None, description="请填写 sessdata")
-    bili_jct: Optional[str] = Field(default=None, description="请填写 bili_jct")
+    sessdata: Optional[str] = Field(
+        default=None, description="请填写 sessdata"
+    )
+    bili_jct: Optional[str] = Field(
+        default=None, description="请填写 bili_jct"
+    )
     buvid3: Optional[str] = Field(default=None, description="请填写 buvid3")
-    dedeuserid: Optional[int] = Field(default=None, description="请填写 dedeuserid")
+    dedeuserid: Optional[int] = Field(
+        default=None, description="请填写 dedeuserid"
+    )
     ac_time_value: Optional[str] = Field(
         default=None, description="可选：如果需要刷新cookie（不需要可留空）"
     )
@@ -112,7 +125,11 @@ class Settings(BaseModel):
 class DummyCredential(Credential):
     def __init__(self):
         super().__init__(
-            sessdata="", bili_jct="", buvid3="", dedeuserid="", ac_time_value=""
+            sessdata="",
+            bili_jct="",
+            buvid3="",
+            dedeuserid="",
+            ac_time_value="",
         )
 
     def __repr__(self):
@@ -129,7 +146,9 @@ def model_to_commented_map(model: BaseModel) -> CommentedMap:
         output[name] = default
 
         if field.description:
-            output.yaml_set_comment_before_after_key(name, before=field.description)
+            output.yaml_set_comment_before_after_key(
+                name, before=field.description
+            )
 
     return output
 
@@ -141,7 +160,11 @@ def write_config_with_comments(model: BaseModel, path: str = "config.yaml"):
         if isinstance(section, BaseModel):
             config_map[name] = model_to_commented_map(section)
 
-    os.makedirs(os.path.dirname(path), exist_ok=True) if os.path.dirname(path) else None
+    (
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        if os.path.dirname(path)
+        else None
+    )
 
     with open(path, "w", encoding="utf-8") as f:
         yaml_ruamel.dump(config_map, f)

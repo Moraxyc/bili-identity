@@ -13,6 +13,7 @@
             sqlite
 
             pypkgs.venvShellHook
+            pypkgs.flake8
           ]
           ++ (import ./deps.nix pypkgs);
       };

@@ -1,8 +1,6 @@
 from datetime import datetime, timedelta, timezone
-from typing import Literal
 
 from sqlalchemy import Column, DateTime, String
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.types import Enum
 
 from .Base import Base
@@ -18,7 +16,9 @@ class VerificationCode(Base):
         default="active",
         comment="主被动模式",
     )
-    expires_at = Column(DateTime(timezone=True), nullable=False, comment="过期时间")
+    expires_at = Column(
+        DateTime(timezone=True), nullable=False, comment="过期时间"
+    )
     created_at = Column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
@@ -36,5 +36,6 @@ class VerificationCode(Base):
         return cls(
             uid=uid,
             code=code,
-            expires_at=datetime.now(timezone.utc) + timedelta(minutes=expire_minutes),
+            expires_at=datetime.now(timezone.utc)
+            + timedelta(minutes=expire_minutes),
         )

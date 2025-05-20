@@ -26,7 +26,9 @@ async def save_verification_code(
     expires_at: Optional[datetime] = None,
     mode: str = "active",
 ) -> bool:
-    expires_at = expires_at or datetime.now(timezone.utc) + timedelta(minutes=5)
+    expires_at = expires_at or datetime.now(timezone.utc) + timedelta(
+        minutes=5
+    )
 
     record = VerificationCode(
         uid=uid,

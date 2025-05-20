@@ -31,3 +31,10 @@ dependencies = { file = ["requirements.txt"] }
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["bili_identity*"]
+
+[tool.black]
+line-length = 76
+target-version = ['py313']
+
+[tool.isort]
+profile = "black"

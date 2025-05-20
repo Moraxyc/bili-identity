@@ -15,7 +15,9 @@ async def get_user(uid: int, session: AsyncSession) -> Optional[User]:
     return result.scalar_one_or_none()
 
 
-async def create_user(uid: int, session: AsyncSession, **kwargs) -> Optional[User]:
+async def create_user(
+    uid: int, session: AsyncSession, **kwargs
+) -> Optional[User]:
     new_user = User(uid=uid, **kwargs)
     session.add(new_user)
 
@@ -28,7 +30,9 @@ async def create_user(uid: int, session: AsyncSession, **kwargs) -> Optional[Use
         return None
 
 
-async def update_user(uid: int, session: AsyncSession, **kwargs) -> Optional[User]:
+async def update_user(
+    uid: int, session: AsyncSession, **kwargs
+) -> Optional[User]:
     user = await get_user(uid, session)
 
     if not user:

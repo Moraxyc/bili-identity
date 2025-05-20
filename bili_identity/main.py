@@ -11,10 +11,9 @@ from .api import auth_router
 
 # from .api import admin, oidc
 from .config import config
+from .db import init_db
 
 logger = logging.getLogger(__name__)
-
-from .db import init_db
 
 
 @asynccontextmanager
