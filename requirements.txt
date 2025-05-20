@@ -7,3 +7,5 @@ sqlalchemy
 aiosqlite
 
 ruamel.yaml
+pydantic
+pydantic-core

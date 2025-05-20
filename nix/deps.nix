@@ -8,4 +8,6 @@ pypkgs: with pypkgs; [
   aiosqlite
 
   ruamel-yaml
+  pydantic
+  pydantic-core
 ]

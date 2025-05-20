@@ -1,12 +1,12 @@
 {
   lib,
-  python3,
+  python313,
 }:
 
 let
-  pypkgs = python3.pkgs;
+  pypkgs = python313.pkgs;
 in
-python3.pkgs.buildPythonPackage {
+pypkgs.buildPythonPackage {
   pname = "bili-identity";
   version = builtins.readFile ../bili_identity/VERSION;
   pyproject = true;
