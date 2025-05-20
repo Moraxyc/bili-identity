@@ -7,18 +7,31 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from bili_identity import __version__
 
+from .api import auth_router
+
 # from .api import admin, oidc
 from .config import config
 
 logger = logging.getLogger(__name__)
 
-# 创建app实例
+from .db import init_db
+
+
+@asynccontextmanager
+async def lifespan(_):
+    logger.debug("进入初始化生命周期")
+    await init_db()
+    yield
+
+
 app = FastAPI(
     title="Bili Identity",
     description="B站账号认证 OpenID Connect 兼容层",
     version=__version__,
+    lifespan=lifespan,
 )
 
+# 创建app实例
 # TODO: 改为配置文件里设置，以达到生产可用目的
 app.add_middleware(
     CORSMiddleware,
@@ -30,24 +43,12 @@ app.add_middleware(
 
 # TODO: 完成路由
 # 注册 OIDC 和管理端路由
-# app.include_router(oidc.router, prefix="", tags=["oidc"])
-# app.include_router(admin.router, prefix="/admin", tags=["admin"])
+app.include_router(auth_router)
 
 
 @app.get("/")
 def read_root():
     return {"msg": "Welcome to Bili Identity OpenID Connect Service."}
-
-
-from .db import init_db
-
-
-@asynccontextmanager
-async def lifespan(_):
-    # 应用启动时
-    # TODO: 完成数据库
-    # await init_db()
-    yield
 
 
 def main() -> None:
