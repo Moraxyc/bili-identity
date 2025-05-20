@@ -67,7 +67,7 @@ class BiliConfig(BaseModel):
     sessdata: Optional[str] = Field(default=None, description="请填写 sessdata")
     bili_jct: Optional[str] = Field(default=None, description="请填写 bili_jct")
     buvid3: Optional[str] = Field(default=None, description="请填写 buvid3")
-    dedeuserid: Optional[str] = Field(default=None, description="请填写 dedeuserid")
+    dedeuserid: Optional[int] = Field(default=None, description="请填写 dedeuserid")
     ac_time_value: Optional[str] = Field(
         default=None, description="可选：如果需要刷新cookie（不需要可留空）"
     )
@@ -97,7 +97,7 @@ class Settings(BaseModel):
                 sessdata=self.bili.sessdata,
                 bili_jct=self.bili.bili_jct,
                 buvid3=self.bili.buvid3,
-                dedeuserid=self.bili.dedeuserid,
+                dedeuserid=str(self.bili.dedeuserid),
                 ac_time_value=self.bili.ac_time_value,
             )
         return DummyCredential()
