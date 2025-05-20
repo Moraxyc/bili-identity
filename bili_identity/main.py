@@ -58,7 +58,7 @@ def main() -> None:
         return
     logging.basicConfig(level=getattr(logging, config.log.level))
     uvicorn.run(
-        "bili_identity.main:app",
+        app,
         host=config.server.host,
         port=config.server.port,
         reload=config.server.reload,
