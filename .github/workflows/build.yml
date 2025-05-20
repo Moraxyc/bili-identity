@@ -42,7 +42,7 @@ jobs:
           uv pyinstaller --onefile bili_identity/main.py --name bili_identity --paths .
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3.1.3
+        uses: actions/upload-artifact@v3.2.1
         with:
           name: build-artifacts-${{ runner.os }}
           path: |
