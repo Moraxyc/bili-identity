@@ -3,8 +3,10 @@ import os
 from typing import List, Literal, Optional
 
 import yaml
-from pydantic import BaseModel, Field
-from ruamel.yaml import YAML
+from bilibili_api import Credential
+from bilibili_api.session import Session
+from pydantic import BaseModel, Field, model_validator
+from ruamel.yaml import YAML, sys
 from ruamel.yaml.comments import CommentedMap
 
 logger = logging.getLogger(__name__)
@@ -65,7 +67,7 @@ class BiliConfig(BaseModel):
     sessdata: Optional[str] = Field(default=None, description="请填写 sessdata")
     bili_jct: Optional[str] = Field(default=None, description="请填写 bili_jct")
     buvid3: Optional[str] = Field(default=None, description="请填写 buvid3")
-    dedeuserid: Optional[int] = Field(default=None, description="请填写 dedeuserid")
+    dedeuserid: Optional[str] = Field(default=None, description="请填写 dedeuserid")
     ac_time_value: Optional[str] = Field(
         default=None, description="可选：如果需要刷新cookie（不需要可留空）"
     )
@@ -80,6 +82,41 @@ class Settings(BaseModel):
     security: SecurityConfig = SecurityConfig()
     bili: BiliConfig = BiliConfig()
     oidc: OIDCConfig = OIDCConfig()
+
+    @property
+    def credential(self) -> Credential:
+        if all(
+            [
+                self.bili.sessdata,
+                self.bili.bili_jct,
+                self.bili.buvid3,
+                self.bili.dedeuserid,
+            ]
+        ):
+            return Credential(
+                sessdata=self.bili.sessdata,
+                bili_jct=self.bili.bili_jct,
+                buvid3=self.bili.buvid3,
+                dedeuserid=self.bili.dedeuserid,
+                ac_time_value=self.bili.ac_time_value,
+            )
+        return DummyCredential()
+
+    @property
+    def session(self) -> Session:
+        if not hasattr(self, "_session"):
+            self._session = Session(self.credential)
+        return self._session
+
+
+class DummyCredential(Credential):
+    def __init__(self):
+        super().__init__(
+            sessdata="", bili_jct="", buvid3="", dedeuserid="", ac_time_value=""
+        )
+
+    def __repr__(self):
+        return "<DummyCredential>"
 
 
 def model_to_commented_map(model: BaseModel) -> CommentedMap:
@@ -124,7 +161,12 @@ def load_config(path: str = "config.yaml") -> Settings:
     with open(path, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
     logger.info(f"配置文件加载成功：{path}")
-    return Settings(**data)
+    settings = Settings(**data)
+    cred = settings.credential
+    if isinstance(cred, DummyCredential):
+        logger.error("请填写必要的Bilibili相关配置")
+        sys.exit(1)
+    return settings
 
 
 config: Settings = load_config()
