@@ -17,6 +17,10 @@ yaml_ruamel.indent(mapping=2, sequence=4, offset=2)
 yaml_ruamel.default_flow_style = False
 
 
+class MissingCredentialError(Exception):
+    pass
+
+
 class AppConfig(BaseModel):
     allowed_hosts: List[str] = ["127.0.0.1"]
     base_url: str = "http://bili-id.example.org"
@@ -188,8 +192,7 @@ def load_config(path: str = "config.yaml") -> Settings:
     settings = Settings(**data)
     cred = settings.credential
     if isinstance(cred, DummyCredential):
-        logger.error("请填写必要的Bilibili相关配置")
-        sys.exit(1)
+        raise MissingCredentialError("请填写必要的Bilibili相关配置")
     return settings
 
 
@@ -204,4 +207,4 @@ def get_config() -> Settings:
     return _config_instance
 
 
-__all__ = ["get_config"]
+__all__ = ["get_config", "MissingCredentialError"]

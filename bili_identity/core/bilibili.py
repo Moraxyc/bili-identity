@@ -2,8 +2,6 @@ from bili_identity.config import get_config
 from bili_identity.db import AsyncSessionLocal, save_verification_code
 from bili_identity.utils.random import generate_code
 
-config = get_config()
-
 
 async def send_verification_code(uid: int):
     """
@@ -13,6 +11,7 @@ async def send_verification_code(uid: int):
     from bilibili_api import session
 
     # 使用 B 站 API 发送验证码消息
+    config = get_config()
     await session.send_msg(
         config.credential,
         uid,

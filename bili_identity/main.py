@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from bili_identity import __version__
 from bili_identity.api import auth_router
-from bili_identity.config import get_config
+from bili_identity.config import MissingCredentialError, get_config
 
 # from .api import admin, oidc
 from bili_identity.db import init_db
@@ -50,7 +50,12 @@ def read_root():
 
 
 def main() -> None:
-    config = get_config()
+    try:
+        config = get_config()
+    except MissingCredentialError as e:
+        logger.error(f"配置错误: {e}")
+        input("按 Enter 键退出...")
+        return
     logging.basicConfig(level=getattr(logging, config.log.level))
     uvicorn.run(
         "bili_identity.main:app",
