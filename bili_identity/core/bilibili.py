@@ -1,9 +1,6 @@
-from datetime import datetime, timedelta, timezone
-
-from config import config
-from db import AsyncSessionLocal
-from models.verification import VerificationCode
-from utils.random import generate_code
+from bili_identity.config import config
+from bili_identity.db import AsyncSessionLocal, save_verification_code
+from bili_identity.utils.random import generate_code
 
 
 async def send_verification_code(uid: int):
@@ -18,11 +15,4 @@ async def send_verification_code(uid: int):
     )
 
     async with AsyncSessionLocal() as db_session:
-        record = VerificationCode(
-            uid=uid,
-            code=code,
-            expires_at=datetime.now(timezone.utc) + timedelta(minutes=5),
-            mode="active",
-        )
-        await db_session.merge(record)
-        await db_session.commit()
+        await save_verification_code(uid, db_session, code=code)
