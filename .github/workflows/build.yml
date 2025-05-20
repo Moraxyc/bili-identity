@@ -38,7 +38,7 @@ jobs:
 
       - name: Build binary
         run: |
-          uv run pyinstaller --onefile bili_identity/main.py --name bili_identity --paths .
+          uv run pyinstaller .spec
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -46,4 +46,4 @@ jobs:
           name: build-artifacts-${{ runner.os }}
           path: |
             dist/*.whl
-            dist/bili_identity*
+            dist/bili-identity*
