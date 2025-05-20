@@ -188,9 +188,18 @@ def load_config(path: str = "config.yaml") -> Settings:
     cred = settings.credential
     if isinstance(cred, DummyCredential):
         logger.error("请填写必要的Bilibili相关配置")
-        sys.exit(1)
+        sys.exit(0)
     return settings
 
 
-config: Settings = load_config()
-__all__ = ["config"]
+_config_instance: Optional[Settings] = None
+
+
+def get_config() -> Settings:
+    global _config_instance
+    if _config_instance is None:
+        _config_instance = load_config()
+    return _config_instance
+
+
+__all__ = ["get_config"]

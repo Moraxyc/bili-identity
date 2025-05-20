@@ -7,10 +7,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from bili_identity import __version__
 from bili_identity.api import auth_router
+from bili_identity.config import get_config
 
 # from .api import admin, oidc
-from bili_identity.config import config
 from bili_identity.db import init_db
+
+config = get_config()
 
 logger = logging.getLogger(__name__)
 
