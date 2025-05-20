@@ -7,6 +7,18 @@ logger = logging.getLogger(__name__)
 
 
 async def register_user(uid: int, anyway: bool = False, **kwargs) -> bool:
+    """
+    注册用户。如果用户已存在且未设置 `anyway=True`，则不执行注册。
+
+    :param uid: 用户的B站UID
+    :type uid: int
+    :param anyway: 是否无视已有用户强制注册，默认为 False
+    :type anyway: bool
+    :param kwargs: 创建用户时传入的其他关键字参数，将传递给 `create_user`
+    :type kwargs: dict
+    :return: 注册是否成功。成功返回 True，失败返回 False
+    :rtype: bool
+    """
     async with AsyncSessionLocal() as session:
         if await get_user(uid, session) and not anyway:
             logger.warning(f"用户 {uid} 已存在，无法注册")
@@ -15,6 +27,14 @@ async def register_user(uid: int, anyway: bool = False, **kwargs) -> bool:
 
 
 async def mark_user_as_verified(uid: int) -> bool:
+    """
+    将指定用户标记为已验证状态。
+
+    :param uid: 要标记为已验证的用户 UID
+    :type uid: int
+    :return: 若更新成功则返回 True，否则返回 False
+    :rtype: bool
+    """
     async with AsyncSessionLocal() as session:
         result = await update_user(uid, session, is_verified=True)
         if result:
