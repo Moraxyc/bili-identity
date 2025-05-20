@@ -5,7 +5,7 @@ from sqlalchemy import Column, DateTime, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.types import Enum
 
-Base = declarative_base()
+from .Base import Base
 
 
 class VerificationCode(Base):

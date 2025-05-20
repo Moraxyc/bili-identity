@@ -13,5 +13,7 @@ class Token(Base):
     client_id = Column(String, ForeignKey("clients.client_id"))
     access_token = Column(String, nullable=False)
     id_token = Column(String, nullable=True)
-    expires_at = Column(DateTime, nullable=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+    created_at = Column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
