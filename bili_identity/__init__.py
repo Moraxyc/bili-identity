@@ -1,16 +1,11 @@
-import os
-import sys
+import pkgutil
 
-
-def resource_path(relative_path):
-    if hasattr(sys, "_MEIPASS"):
-        base_path = getattr(sys, "_MEIPASS")
-    else:
-        base_path = os.path.dirname(__file__)
-    return os.path.join(base_path, relative_path)
-
-
-with open(resource_path("VERSION")) as f:
-    __version__ = f.read().strip()
+try:
+    VERSION_bin = pkgutil.get_data("bili_identity", "VERSION")
+    __version__ = (
+        VERSION_bin.decode("utf-8", "ignore") if VERSION_bin else "unknown"
+    )
+except Exception:
+    __version__ = "unknown"
 
 __all__ = ["__version__"]
