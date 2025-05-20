@@ -1,13 +1,6 @@
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from bili_identity.config import config
-
-async_engine = create_async_engine(
-    config.database.uri,
-    echo=config.log.level == "DEBUG",
-    pool_pre_ping=True,
-    future=True,
-)
+from .engine import async_engine
 
 AsyncSessionLocal = async_sessionmaker(
     bind=async_engine,
