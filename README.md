@@ -1,4 +1,4 @@
-# Bili Identity
+# Bili Identity [WIP]
 
 ## 项目简介
 
@@ -12,7 +12,7 @@
 
 ## TODO
 
-- [ ] 基本Bilibili私信鉴权功能
+- [ ] 基本Bilibili私信鉴权功能 主被动
 - [ ] 对外暴露的OpenID API
 - [ ] 前端界面优化
 - [ ] 部署文档（含 Docker/一键脚本）
