@@ -1,6 +1,5 @@
 import logging
-from datetime import datetime, timedelta, timezone
-from typing import Optional
+from typing import Literal, Optional
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -23,17 +22,13 @@ async def save_verification_code(
     uid: int,
     session: AsyncSession,
     code: str,
-    expires_at: Optional[datetime] = None,
-    mode: str = "active",
+    expire_minutes: int = 5,
+    mode: Literal["active", "passive"] = "passive",
 ) -> bool:
-    expires_at = expires_at or datetime.now(timezone.utc) + timedelta(
-        minutes=5
-    )
-
-    record = VerificationCode(
+    record = VerificationCode.create(
         uid=uid,
         code=code,
-        expires_at=expires_at,
+        expire_minutes=expire_minutes,
         mode=mode,
     )
 

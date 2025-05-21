@@ -47,18 +47,14 @@ async def verify_code(uid: int, code: str) -> bool:
         current_at = datetime.now(timezone.utc)
         logger.debug(f"验证码过期时间: {expires_at}")
 
-        # 确保过期时间是有时区信息的 datetime 对象
-        if expires_at.tzinfo is None:
-            expires_at = expires_at.replace(tzinfo=timezone.utc)
-
         # 判断验证码是否已过期
-        if expires_at < current_at:
+        if record.is_expired():
             logger.debug(f"验证码已过期, 当前{current_at}")
             return False
 
         # 验证输入的验证码是否匹配
         logger.debug(f"验证码: {record.code}")
-        if record.code != code:
+        if record.is_match(code):
             logger.debug(f"验证码不符合: {code}")
             return False
 
