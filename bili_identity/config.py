@@ -7,7 +7,7 @@ import yaml
 from bilibili_api import Credential
 from bilibili_api.session import Session
 from pydantic import BaseModel, Field
-from ruamel.yaml import YAML, sys
+from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap
 
 logger = logging.getLogger(__name__)
