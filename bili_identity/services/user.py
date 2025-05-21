@@ -1,4 +1,5 @@
 import logging
+from typing import cast
 
 from bili_identity.db import AsyncSessionLocal, get_user
 from bili_identity.db.user import create_user, update_user
@@ -41,3 +42,20 @@ async def mark_user_as_verified(uid: int) -> bool:
             return True
         logger.warning(f"无法更新用户 {uid} 状态为已验证")
         return False
+
+
+async def is_user_verified(uid: int) -> bool:
+    """
+    判断用户在数据库中是否已经过验证。
+
+    :param uid: 要标记验证的用户 UID
+    :type uid: int
+    :return: 若已验证则返回 True，否则返回 False
+    :rtype: bool
+    """
+    async with AsyncSessionLocal() as session:
+        user = await get_user(uid, session)
+    if not user:
+        return False
+
+    return cast(bool, user.is_verified)

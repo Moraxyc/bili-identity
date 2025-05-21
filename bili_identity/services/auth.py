@@ -1,14 +1,17 @@
 import logging
 from datetime import datetime, timezone
+from typing import Literal
 
 from bili_identity.db import AsyncSessionLocal, get_verification_code
+from bili_identity.db.verifyction_code import save_verification_code
+from bili_identity.utils.random import generate_secret
 
 from .user import mark_user_as_verified, register_user
 
 logger = logging.getLogger(__name__)
 
 
-async def send_code(uid: int):
+async def send_code(uid: int) -> None:
     """
     发送验证码给指定用户。
 
@@ -25,7 +28,21 @@ async def send_code(uid: int):
     await send_verification_code(uid)
 
 
-async def verify_code(uid: int, code: str) -> bool:
+async def gen_passive_code(uid: int) -> str:
+    # 确保用户一定存在
+    await register_user(uid, anyway=True)
+
+    code = generate_secret(length=32)
+    async with AsyncSessionLocal() as db_session:
+        await save_verification_code(
+            uid, db_session, code=code, mode="passive"
+        )
+    return code
+
+
+async def verify_code(
+    uid: int, code: str, mode: Literal["active", "passive"]
+) -> bool:
     """
     验证用户提交的验证码是否有效，若验证成功则标记用户为已验证。
 
@@ -38,7 +55,7 @@ async def verify_code(uid: int, code: str) -> bool:
     """
     async with AsyncSessionLocal() as session:
         # 查询数据库中该用户的验证码记录
-        record = await get_verification_code(uid, session)
+        record = await get_verification_code(uid, session, mode=mode)
         if not record:
             logger.warning(f"未找到验证码记录 uid={uid}")
             return False
