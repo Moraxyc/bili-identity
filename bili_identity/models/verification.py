@@ -28,7 +28,7 @@ class VerificationCode(Base):
     )
 
     def is_match(self, code: str) -> bool:
-        return cast(str, self.code) == code
+        return cast(str, self.code).strip() == code.strip()
 
     def is_expired(self) -> bool:
         if not isinstance(self.expires_at, datetime):
@@ -51,7 +51,7 @@ class VerificationCode(Base):
     ):
         return cls(
             uid=uid,
-            code=code,
+            code=code.strip(),
             expires_at=datetime.now(timezone.utc)
             + timedelta(minutes=expire_minutes),
             mode=mode,

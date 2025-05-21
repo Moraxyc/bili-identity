@@ -54,7 +54,7 @@ async def verify_code(uid: int, code: str) -> bool:
 
         # 验证输入的验证码是否匹配
         logger.debug(f"验证码: {record.code}")
-        if record.is_match(code):
+        if not record.is_match(code):
             logger.debug(f"验证码不符合: {code}")
             return False
 
