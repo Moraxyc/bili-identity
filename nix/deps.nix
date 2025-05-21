@@ -1,5 +1,9 @@
 pypkgs: with pypkgs; [
-  bilibili-api-python
+  (bilibili-api-python.overrideAttrs (
+    _finalAttrs: _prevAttrs: {
+      patches = [ ./0001-fix-fetch_session_msgs.patch ];
+    }
+  ))
 
   fastapi
   uvicorn
@@ -10,4 +14,6 @@ pypkgs: with pypkgs; [
   ruamel-yaml
   pydantic
   pydantic-core
+
+  httpx
 ]

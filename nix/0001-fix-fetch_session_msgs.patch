@@ -1,0 +1,32 @@
+From c1c7a95605f6e69f18a0d8fb5b4b99274b692d7e Mon Sep 17 00:00:00 2001
+From: Moraxyc <i@qaq.li>
+Date: Wed, 21 May 2025 23:10:32 +0800
+Subject: [PATCH] fix: fetch_session_msgs
+
+---
+ bilibili_api/session.py | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/bilibili_api/session.py b/bilibili_api/session.py
+index 20ce282..7e9ba23 100644
+--- a/bilibili_api/session.py
++++ b/bilibili_api/session.py
+@@ -50,10 +50,14 @@ async def fetch_session_msgs(
+         "talker_id": talker_id,
+         "session_type": session_type,
+         "begin_seqno": begin_seqno,
++        "size": 50,
++        "sender_device_id": 1,
++        "build": 0,
++        "mobi_app": "web",
+     }
+     api = API["session"]["fetch"]
+ 
+-    return await Api(**api, credential=credential).update_params(**params).result
++    return await Api(**api, credential=credential, wbi=True).update_params(**params).result
+ 
+ 
+ async def new_sessions(
+-- 
+2.49.0
+
