@@ -2,6 +2,7 @@ import logging
 from contextlib import asynccontextmanager
 
 import uvicorn
+from bilibili_api.session import EventType
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -14,11 +15,25 @@ from bili_identity.db import init_db
 
 logger = logging.getLogger(__name__)
 
+try:
+    config = get_config()
+except MissingCredentialError as e:
+    logger.error(f"配置错误: {e}")
+    input("按 Enter 键退出...")
+    raise SystemExit(1)
+
 
 @asynccontextmanager
 async def lifespan(_):
     logger.debug("进入初始化生命周期")
     await init_db()
+
+    from bili_identity.core.bilibili import receive_verifiction_code
+
+    config.session.on(EventType.TEXT)(receive_verifiction_code)
+
+    await config.session.run()
+
     yield
 
 
@@ -50,12 +65,6 @@ def read_root():
 
 
 def main() -> None:
-    try:
-        config = get_config()
-    except MissingCredentialError as e:
-        logger.error(f"配置错误: {e}")
-        input("按 Enter 键退出...")
-        return
     logging.basicConfig(level=getattr(logging, config.log.level))
     uvicorn.run(
         app,
