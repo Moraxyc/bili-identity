@@ -10,10 +10,14 @@ logger = logging.getLogger(__name__)
 
 
 async def get_verification_code(
-    uid: int, session: AsyncSession
+    uid: int,
+    session: AsyncSession,
+    mode: Literal["active", "passive"] = "active",
 ) -> Optional[VerificationCode]:
     result = await session.execute(
-        select(VerificationCode).where(VerificationCode.uid == uid)
+        select(VerificationCode).where(
+            VerificationCode.uid == uid, VerificationCode.mode == mode
+        )
     )
     return result.scalar_one_or_none()
 
