@@ -10,6 +10,7 @@ pypkgs: with pypkgs; [
 
   sqlalchemy
   aiosqlite
+  redis
 
   ruamel-yaml
   pydantic

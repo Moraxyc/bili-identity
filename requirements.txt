@@ -5,6 +5,7 @@ uvicorn
 
 sqlalchemy
 aiosqlite
+redis
 
 ruamel.yaml
 pydantic
