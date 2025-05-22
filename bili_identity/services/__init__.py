@@ -1,9 +1,11 @@
 from .auth import gen_passive_code, send_code, verify_code
-from .user import is_user_verified
+from .session import is_session_verified
+from .user import register_user
 
 __all__ = [
     "verify_code",
     "send_code",
     "gen_passive_code",
-    "is_user_verified",
+    "is_session_verified",
+    "register_user",
 ]

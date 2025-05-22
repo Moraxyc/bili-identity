@@ -2,13 +2,21 @@ import logging
 from datetime import datetime, timezone
 from typing import Literal
 
-from bili_identity.db import AsyncSessionLocal, get_verification_code
-from bili_identity.db.verifyction_code import save_verification_code
-from bili_identity.utils.random import generate_secret
+from bili_identity.config import get_config
+from bili_identity.db import (
+    AsyncSessionLocal,
+    get_session_id_by_uid,
+    get_verification_code,
+    save_verification_code,
+    update_session_id,
+)
+from bili_identity.utils import generate_secret
 
-from .user import mark_user_as_verified, register_user
+from .user import register_user
 
 logger = logging.getLogger(__name__)
+
+config = get_config()
 
 
 async def send_code(uid: int) -> None:
@@ -77,6 +85,12 @@ async def verify_code(
 
         logger.debug("验证通过")
 
-        # 标记用户为已验证
-        await mark_user_as_verified(uid)
-        return True
+        # 存储用户已验证的session
+        session_id = await get_session_id_by_uid(uid)
+        logger.debug(f"通过uid反查激活的session {session_id}")
+        if session_id:
+            await update_session_id(
+                session_id, {"verified": True}, config.security.session_ttl
+            )
+            return True
+        return False
