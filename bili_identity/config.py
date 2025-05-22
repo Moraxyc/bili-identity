@@ -39,6 +39,14 @@ class DatabaseConfig(BaseModel):
     pool_size: int = 10
 
 
+class RedisConfig(BaseModel):
+    enable: bool = Field(
+        default=False,
+        description="是否使用redis作为session后端，如果不启用，则默认使用内存模式，重启清空",
+    )
+    uri: str = "redis://localhost"
+
+
 class LogConfig(BaseModel):
     level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
     file: str = "bili_id.log"
@@ -56,6 +64,10 @@ class SecurityConfig(BaseModel):
     allowed_redirect_uris: List[str] = Field(
         default_factory=lambda: ["http://your-app.com/callback"],
         description="允许的回调地址列表",
+    )
+    session_ttl: int = Field(
+        default=3600,
+        description="B站验证成功的会话有效时间，延长可减少验证次数",
     )
 
 
@@ -95,6 +107,7 @@ class BiliConfig(BaseModel):
 class Settings(BaseModel):
     app: AppConfig = AppConfig()
     database: DatabaseConfig = DatabaseConfig()
+    redis: RedisConfig = RedisConfig()
     log: LogConfig = LogConfig()
     server: ServerConfig = ServerConfig()
     security: SecurityConfig = SecurityConfig()
