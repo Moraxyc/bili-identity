@@ -1,11 +1,13 @@
 import logging
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request, Response
 
+from bili_identity.config import get_config
+from bili_identity.db import create_session_id
 from bili_identity.schemas import SubmitUIDRequest, VerifyCodeRequest
 from bili_identity.services import (
     gen_passive_code,
-    is_user_verified,
+    is_session_verified,
     send_code,
     verify_code,
 )
@@ -14,9 +16,11 @@ auth_router = APIRouter(prefix="/api/auth")
 
 logger = logging.getLogger(__name__)
 
+config = get_config()
+
 
 @auth_router.post("/passive")
-async def response_code(data: SubmitUIDRequest):
+async def response_code(data: SubmitUIDRequest, response: Response):
     """
     接收用户提交的 UID，返回验证码。
 
@@ -26,11 +30,21 @@ async def response_code(data: SubmitUIDRequest):
     :rtype: dict
     """
     code = await gen_passive_code(data.uid)
+    session_id = await create_session_id(
+        data.uid, config.security.session_ttl, False
+    )
+    response.set_cookie(
+        key="session_id",
+        value=session_id,
+        httponly=True,
+        secure=True,
+        max_age=config.security.session_ttl,
+    )
     return {"code": code}
 
 
 @auth_router.post("/send")
-async def request_code(data: SubmitUIDRequest):
+async def request_code(data: SubmitUIDRequest, response: Response):
     """
     接收用户提交的 UID，请求发送验证码。
 
@@ -40,6 +54,16 @@ async def request_code(data: SubmitUIDRequest):
     :rtype: dict
     """
     await send_code(data.uid)
+    session_id = await create_session_id(
+        data.uid, config.security.session_ttl, False
+    )
+    response.set_cookie(
+        key="session_id",
+        value=session_id,
+        httponly=True,
+        secure=True,
+        max_age=config.security.session_ttl,
+    )
     return {"message": "验证码已发送"}
 
 
@@ -61,8 +85,8 @@ async def submit_code(data: VerifyCodeRequest):
     raise HTTPException(status_code=400, detail="验证码错误或已过期")
 
 
-@auth_router.post("/status")
-async def response_is_verified(data: SubmitUIDRequest):
+@auth_router.get("/status")
+async def response_is_verified(request: Request):
     """
     接收用户提交的 UID。
 
@@ -71,5 +95,9 @@ async def response_is_verified(data: SubmitUIDRequest):
     :return: 返回用户是否已通过验证
     :rtype: dict
     """
-    is_verified = await is_user_verified(data.uid)
-    return {"is_verified": is_verified}
+    session_id = request.cookies.get("session_id")
+    if not session_id:
+        raise HTTPException(status_code=401, detail="未登录")
+    if not await is_session_verified(session_id):
+        raise HTTPException(status_code=403, detail="用户尚未验证")
+    return {"message": "已认证"}
