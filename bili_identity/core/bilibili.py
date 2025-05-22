@@ -1,6 +1,8 @@
 import logging
 
+import bilibili_api
 from bilibili_api.session import Event, EventType
+from bilibili_api.user import User
 
 from bili_identity.config import get_config
 from bili_identity.db import AsyncSessionLocal, save_verification_code
@@ -27,7 +29,9 @@ async def send_verification_code(uid: int):
     )
 
     async with AsyncSessionLocal() as db_session:
-        await save_verification_code(uid, db_session, code=code)
+        await save_verification_code(
+            uid, db_session, code=code, mode="active"
+        )
 
 
 config = get_config()
@@ -54,10 +58,15 @@ async def receive_verifiction_code(event: Event):
     success = await verify_code(event.sender_uid, code, mode="passive")
 
     if success:
-        logger.debug(f"用户 {event.uid} 验证成功。")
+        logger.debug(f"用户 {event.sender_uid} 验证成功。")
         await config.session.reply(event, "✅ 验证成功，您已完成身份验证。")
     else:
-        logger.debug(f"用户 {event.uid} 验证失败")
+        logger.debug(f"用户 {event.sender_uid} 验证失败")
         await config.session.reply(
             event, "❌ 验证失败，验证码错误或已过期。"
         )
+
+
+async def fetch_user_info(uid: int) -> dict:
+    user = User(uid=uid, credential=config.credential)
+    return await user.get_user_info()
