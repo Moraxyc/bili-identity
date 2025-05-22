@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from bili_identity.db.engine import get_async_engine
+from .engine import get_async_engine
 
 _async_session_factory = None
 
