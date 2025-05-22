@@ -10,9 +10,15 @@
 - Bilibili 官方未提供 OAuth2/OpenID 的站点认证API访问权限
 - 需要以低成本、开源自托管方式接入 B 站账号登录的第三方网站
 
+## 文档
+
+接口文档:
+
+- [B站用户认证 API 文档](docs/auth_api.md)
+
 ## TODO
 
-- [ ] 基本Bilibili私信鉴权功能 主被动
+- [x] 基本Bilibili私信鉴权功能 主被动
 - [ ] 对外暴露的OpenID API
 - [ ] 前端界面优化
 - [ ] 部署文档（含 Docker/一键脚本）
