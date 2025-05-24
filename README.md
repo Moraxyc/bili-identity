@@ -19,7 +19,10 @@
 ## TODO
 
 - [x] 基本Bilibili私信鉴权功能 主被动
+- [x] JWT鉴权, JWK签名
 - [ ] 对外暴露的OpenID API
+  - [x] /.well-known/openid-{configuration,jwks}
+  - [ ] /api/oidc/{auth,token,userinfo}
 - [ ] 前端界面优化
 - [ ] 部署文档（含 Docker/一键脚本）
 - [ ] 日志与安全监控
