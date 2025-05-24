@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta, timezone
-from typing import Literal, cast
+from typing import Literal
 
-from sqlalchemy import Column, DateTime, String
+from sqlalchemy import DateTime, String
+from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.types import Enum, Integer
 
 from .Base import Base
@@ -10,25 +11,29 @@ from .Base import Base
 class VerificationCode(Base):
     __tablename__ = "verification_codes"
 
-    uid = Column(Integer, primary_key=True, index=True, comment="B站 UID")
-    mode = Column(
+    uid: Mapped[int] = mapped_column(
+        Integer, primary_key=True, index=True, comment="B站 UID"
+    )
+    mode: Mapped[str] = mapped_column(
         Enum("active", "passive", name="mode_enum"),
         default="passive",
         primary_key=True,
         comment="主被动模式",
     )
-    code = Column(String, nullable=False, comment="验证码")
-    expires_at = Column(
+    code: Mapped[str] = mapped_column(
+        String, nullable=False, comment="验证码"
+    )
+    expires_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, comment="过期时间"
     )
-    created_at = Column(
+    created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=datetime.now(timezone.utc),
+        default=lambda: datetime.now(timezone.utc),
         comment="创建时间",
     )
 
     def is_match(self, code: str) -> bool:
-        return cast(str, self.code).strip() == code.strip()
+        return self.code.strip() == code.strip()
 
     def is_expired(self) -> bool:
         if not isinstance(self.expires_at, datetime):
