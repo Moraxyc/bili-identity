@@ -36,9 +36,17 @@ class JWKKey(Base):
         )
 
     @property
+    def jwk(self) -> jwk.JWK:
+        """
+        返回完整JWK对象
+        """
+        full_key = jwk.JWK.from_json(self.content)
+        return full_key
+
+    @property
     def key(self) -> dict:
         """
-        返回完整JWK
+        返回完整JWK字典
         """
         full_key = json.loads(self.content)
         return full_key
@@ -46,7 +54,7 @@ class JWKKey(Base):
     @property
     def pubkey(self) -> dict:
         """
-        返回JWK公钥
+        返回JWK公钥字典
         """
         full_key = jwk.JWK.from_json(self.content)
         public_jwk_json = full_key.export(private_key=False, as_dict=True)

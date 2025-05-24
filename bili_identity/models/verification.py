@@ -5,7 +5,11 @@ from sqlalchemy import DateTime, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.types import Enum, Integer
 
+from bili_identity.config import get_config
+
 from .Base import Base
+
+config = get_config()
 
 
 class VerificationCode(Base):
@@ -51,13 +55,13 @@ class VerificationCode(Base):
         cls,
         uid: int,
         code: str,
-        expire_minutes: int = 5,
+        expire_ttl: int = config.security.code_ttl,
         mode: Literal["active", "passive"] = "active",
     ):
         return cls(
             uid=uid,
             code=code.strip(),
             expires_at=datetime.now(timezone.utc)
-            + timedelta(minutes=expire_minutes),
+            + timedelta(seconds=expire_ttl),
             mode=mode,
         )

@@ -5,11 +5,11 @@ from typing import Literal
 from bili_identity.config import get_config
 from bili_identity.db import (
     AsyncSessionLocal,
-    get_session_id_by_uid,
     get_verification_code,
+    mark_verified_to_session_id,
     save_verification_code,
-    update_session_id,
 )
+from bili_identity.db.verifyction_code import clear_codes
 from bili_identity.utils import generate_secret
 
 from .user import register_user
@@ -85,12 +85,12 @@ async def verify_code(
 
         logger.debug("验证通过")
 
-        # 存储用户已验证的session
-        session_id = await get_session_id_by_uid(uid)
-        logger.debug(f"通过uid反查激活的session {session_id}")
-        if session_id:
-            await update_session_id(
-                session_id, {"verified": True}, config.security.session_ttl
-            )
-            return True
-        return False
+        mark_verified_to_session_id(uid)
+
+        return True
+
+
+async def clear_all_codes_by_uid(uid: int) -> None:
+    async with AsyncSessionLocal() as session:
+        await clear_codes(session, uid)
+    logger.debug(f"已清除所有uid为{uid}的验证码")

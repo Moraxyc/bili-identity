@@ -1,8 +1,9 @@
 import json
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import List, Optional, Sequence
+from typing import List, Optional, Sequence, cast
 
+from jwcrypto import jwk
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,6 +12,15 @@ from bili_identity.models import JWKKey
 from bili_identity.utils import generate_new_rs256
 
 logger = logging.getLogger(__name__)
+
+
+async def get_first_active_jwk(session: AsyncSession) -> jwk.JWK:
+    await ensure_jwks(session)
+    stmt = select(JWKKey).where(JWKKey.active)
+    result = await session.execute(stmt)
+    obj = result.scalars().first()
+    # Cause ensure_jwks()
+    return cast(JWKKey, obj).jwk
 
 
 async def get_jwk(session: AsyncSession, kid: str) -> Optional[JWKKey]:

@@ -15,7 +15,7 @@ from bili_identity.api import (
 from bili_identity.config import MissingCredentialError, get_config
 
 # from .api import admin, oidc
-from bili_identity.db import get_kv_session, init_db, init_kv
+from bili_identity.db import init_db
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +31,6 @@ except MissingCredentialError as e:
 async def lifespan(_):
     logger.debug("进入初始化生命周期")
     await init_db()
-    await init_kv()
 
     from bili_identity.core.bilibili import receive_verifiction_code
 
@@ -40,10 +39,6 @@ async def lifespan(_):
     await config.session.run()
 
     yield
-
-    kv_session = get_kv_session()
-    if kv_session:
-        await kv_session.aclose()
 
 
 app = FastAPI(

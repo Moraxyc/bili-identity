@@ -11,7 +11,7 @@ pypkgs: with pypkgs; [
 
   sqlalchemy
   aiosqlite
-  redis
+  cachetools
 
   ruamel-yaml
   pydantic

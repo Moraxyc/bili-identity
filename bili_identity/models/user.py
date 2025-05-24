@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from sqlalchemy import DateTime, String
+from sqlalchemy import DateTime, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .Base import Base
@@ -9,8 +9,8 @@ from .Base import Base
 class User(Base):
     __tablename__ = "users"
 
-    uid: Mapped[str] = mapped_column(
-        String, primary_key=True, index=True, comment="B站UID"
+    uid: Mapped[int] = mapped_column(
+        Integer, primary_key=True, index=True, comment="B站UID"
     )
     nickname: Mapped[str | None] = mapped_column(
         String, nullable=True, comment="昵称, 无法实时更新"

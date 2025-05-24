@@ -1,7 +1,6 @@
 import logging
 
-import bilibili_api
-from bilibili_api.session import Event, EventType
+from bilibili_api.session import Event
 from bilibili_api.user import User
 
 from bili_identity.config import get_config

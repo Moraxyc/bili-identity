@@ -39,35 +39,27 @@ class DatabaseConfig(BaseModel):
     pool_size: int = 10
 
 
-class RedisConfig(BaseModel):
-    enable: bool = Field(
-        default=False,
-        description="是否使用redis作为session后端，如果不启用，则默认使用内存模式，重启清空",
-    )
-    uri: str = "redis://localhost"
-
-
 class LogConfig(BaseModel):
     level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
     file: str = "bili_id.log"
 
 
 class SecurityConfig(BaseModel):
-    secret_key: str = Field(
-        default="请填写 secret_key",
-        description="用于加密 JWT 的密钥，必须保密",
+    code_ttl: int = Field(
+        default=300, description="验证码有效时间（秒）, 默认5分钟"
     )
-    jwt_expire_seconds: int = Field(
-        default=3600, description="JWT 有效时间（秒）"
+    id_token_ttl: int = Field(
+        default=600, description="JWT 有效时间（秒）, 默认10分钟"
     )
-    jwt_algorithm: str = Field(default="HS256", description="JWT 加密算法")
+    access_token_ttl: int = Field(
+        default=3600, description="资源访问密钥有效时间（秒）, 默认60分钟"
+    )
+    refresh_token_ttl: int = Field(
+        default=604800, description="刷新密钥有效时间（秒）, 默认7天"
+    )
     allowed_redirect_uris: List[str] = Field(
         default_factory=lambda: ["http://your-app.com/callback"],
         description="允许的回调地址列表",
-    )
-    session_ttl: int = Field(
-        default=3600,
-        description="B站验证成功的会话有效时间，延长可减少验证次数",
     )
 
 
@@ -110,7 +102,6 @@ class BiliConfig(BaseModel):
 class Settings(BaseModel):
     app: AppConfig = AppConfig()
     database: DatabaseConfig = DatabaseConfig()
-    redis: RedisConfig = RedisConfig()
     log: LogConfig = LogConfig()
     server: ServerConfig = ServerConfig()
     security: SecurityConfig = SecurityConfig()
