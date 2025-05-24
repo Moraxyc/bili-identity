@@ -23,7 +23,7 @@ class MissingCredentialError(Exception):
 
 class AppConfig(BaseModel):
     allowed_hosts: List[str] = ["127.0.0.1"]
-    base_url: str = "http://bili-id.example.org"
+    base_url: str = "http://localhost:8000"
 
 
 class ServerConfig(BaseModel):
@@ -78,7 +78,10 @@ class OIDCConfig(BaseModel):
     client_secret: Optional[str] = Field(
         default=None, description="请填写 client_secret"
     )
-    issuer: Optional[str] = Field(default=None, description="请填写 issuer")
+    issuer: Optional[str] = Field(
+        default="https://bili.tv",
+        description="请填写 issuer, 全局唯一且不可变，可以是任何URL",
+    )
     redirect_uris: List[str] = Field(
         default_factory=lambda: ["https://your-app.com/callback"]
     )

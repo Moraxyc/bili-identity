@@ -7,7 +7,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from bili_identity import __version__
-from bili_identity.api import auth_router
+from bili_identity.api import (
+    auth_router,
+    oidc_router,
+    oidc_well_known_router,
+)
 from bili_identity.config import MissingCredentialError, get_config
 
 # from .api import admin, oidc
@@ -62,6 +66,8 @@ app.add_middleware(
 # TODO: 完成路由
 # 注册 OIDC 和管理端路由
 app.include_router(auth_router)
+app.include_router(oidc_router)
+app.include_router(oidc_well_known_router)
 
 
 @app.get("/")
