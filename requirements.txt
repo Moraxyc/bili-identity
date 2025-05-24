@@ -1,4 +1,5 @@
 bilibili-api-python>=17.1.4
+jwcrypto
 
 fastapi
 uvicorn

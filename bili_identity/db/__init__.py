@@ -1,8 +1,7 @@
 from .init import init_db
+from .jwks import ensure_jwks, get_jwk, list_jwks, revoke_jwk, save_new_jwk
 from .kv_backend import get_kv_session, init_kv
 from .session import AsyncSessionLocal
-
-# 操作函数
 from .session_id import (
     create_session_id,
     destroy_session_id,
@@ -12,8 +11,6 @@ from .session_id import (
     update_session_id,
 )
 from .user import create_user, get_user
-
-# 操作函数
 from .verifyction_code import get_verification_code, save_verification_code
 
 __all__ = [
@@ -34,4 +31,10 @@ __all__ = [
     "get_session_id_by_uid",
     "get_session_id",
     "update_session_id",
+    # JWK
+    "get_jwk",
+    "list_jwks",
+    "save_new_jwk",
+    "revoke_jwk",
+    "ensure_jwks",
 ]

@@ -1,4 +1,5 @@
 from .Base import Base
+from .jwks import JWKKey
 from .user import User
 from .verification import VerificationCode
 
@@ -7,4 +8,5 @@ __all__ = [
     "Base",
     "User",
     "VerificationCode",
+    "JWKKey",
 ]

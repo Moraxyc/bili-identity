@@ -4,6 +4,7 @@ pypkgs: with pypkgs; [
       patches = [ ./0001-fix-fetch_session_msgs.patch ];
     }
   ))
+  jwcrypto
 
   fastapi
   uvicorn
