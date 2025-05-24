@@ -16,7 +16,7 @@ async def get_revoked_token(
 
 
 async def revoke_jwt(session: AsyncSession, jti: str) -> None:
-    if not await get_revoked_token(session, jti):
+    if await get_revoked_token(session, jti):
         return
     new_token = RevokedToken(jti=jti)
     session.add(new_token)
